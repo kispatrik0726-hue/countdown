@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1a1a1a url('https://i.imgur.com/q8r2QpH.png') center/cover no-repeat;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.2em;
+      margin-bottom: 20px;
+    }
+    #countdown {
+      display: flex;
+      gap: 15px;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .segment {
+      background: rgba(0,0,0,0.6);
+      padding: 10px 15px;
+      border-radius: 8px;
+    }
+    .label {
+      font-size: 0.5em;
+      display: block;
+      margin-top: 5px;
+      color: #ccc;
+    }
+    #link {
+      display: none;
+      font-size: 1.5em;
+      margin-top: 15px;
+    }
+    #link a {
+      color: #00ffcc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>You have to wait for...</h1>
+  <div id="countdown">
+    <div class="segment"><span id="days">--</span><span class="label">Days</span></div>
+    <div class="segment"><span id="hours">--</span><span class="label">Hours</span></div>
+    <div class="segment"><span id="minutes">--</span><span class="label">Minutes</span></div>
+    <div class="segment"><span id="seconds">--</span><span class="label">Seconds</span></div>
+  </div>
+  <div id="link">
+    <a href="https://youtu.be/FsC57BwqJ1U" target="_blank">Watch YouTube Video 🎬</a>
+  </div>
+
+  <script>
+    const targetDate = new Date("2025-11-04T22:30:00").getTime();
+
+    const daysEl = document.getElementById("days");
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
+    const secondsEl = document.getElementById("seconds");
+    const linkEl = document.getElementById("link");
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        clearInterval(interval);
+        document.getElementById("countdown").style.display = "none";
+        linkEl.style.display = "block";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000*60*60*24));
+      const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+      const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
+      const seconds = Math.floor((distance % (1000*60)) / 1000);
+
+      daysEl.textContent = days;
+      hoursEl.textContent = hours;
+      minutesEl.textContent = minutes;
+      secondsEl.textContent = seconds;
+    }
+
+    const interval = setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
