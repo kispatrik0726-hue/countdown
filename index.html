@@ -4,72 +4,157 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Countdown</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
   <style>
     body {
       margin: 0;
-      font-family: Elephant, sans-serif;
-      background: #1a1a1a;
+      font-family: 'Poppins', sans-serif;
       color: white;
+      height: 100vh;
+      overflow: hidden;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       text-align: center;
+
+      background: linear-gradient(-45deg, #0f0f17, #1a1a2e, #16213e, #0f3460);
+      background-size: 400% 400%;
+      animation: gradientMove 12s ease infinite;
     }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Celebration particles */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: floatUp linear forwards;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) scale(0.3);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      position: relative;
+      backdrop-filter: blur(15px);
+      background: rgba(255,255,255,0.05);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(0,255,200,0.1);
+      max-width: 500px;
+      width: 90%;
+      z-index: 2;
+
+      /* subtle entrance */
+      animation: popIn 1s ease;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
     h1 {
-      font-size: 2.2em;
-      margin-bottom: 20px;
+      font-weight: 500;
+      margin-bottom: 30px;
+      color: #eaeaea;
     }
+
     #countdown {
       display: flex;
+      justify-content: center;
       gap: 15px;
-      font-size: 2em;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
+
     .segment {
-      background: rgba(0,0,0,0.6);
-      padding: 10px 15px;
-      border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      padding: 15px 20px;
+      border-radius: 12px;
     }
+
+    .number {
+      font-size: 2em;
+      font-weight: 700;
+      color: #00ffd0;
+    }
+
     .label {
-      font-size: 0.5em;
-      display: block;
-      margin-top: 5px;
-      color: #ccc;
+      font-size: 0.7em;
+      color: #aaa;
     }
-    #link {
+
+    #message {
       display: none;
-      font-size: 1.5em;
-      margin-top: 15px;
+      animation: fadeIn 1.5s ease forwards;
     }
-    #link a {
-      color: #00ffcc;
+
+    #message h2 {
+      color: #00ffd0;
+    }
+
+    #message a {
+      color: #00ffd0;
       text-decoration: none;
       font-weight: bold;
     }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
   </style>
 </head>
+
 <body>
-  <h1>Im not so sure if I want to show you this</h1>
-  <div id="countdown">
-    <div class="segment"><span id="days">--</span><span class="label">Days</span></div>
-    <div class="segment"><span id="hours">--</span><span class="label">Hours</span></div>
-    <div class="segment"><span id="minutes">--</span><span class="label">Minutes</span></div>
-    <div class="segment"><span id="seconds">--</span><span class="label">Seconds</span></div>
-  </div>
-  <div id="link">
-    <a href="https://youtu.be/FsC57BwqJ1U" target="_blank">Watch YouTube Video 🎬(goodbye for now)</a>
+
+  <div id="particles"></div>
+
+  <div class="container">
+    <h1 id="title">I'm not sure if I want to show you this...</h1>
+
+    <div id="countdown">
+      <div class="segment"><div class="number" id="days">--</div><div class="label">Days</div></div>
+      <div class="segment"><div class="number" id="hours">--</div><div class="label">Hours</div></div>
+      <div class="segment"><div class="number" id="minutes">--</div><div class="label">Minutes</div></div>
+      <div class="segment"><div class="number" id="seconds">--</div><div class="label">Seconds</div></div>
+    </div>
+
+    <div id="message">
+      <h2>The time has come.</h2>
+      <a href="https://youtu.be/FsC57BwqJ1U" target="_blank">
+        Watch the video 🎬 (goodbye for now)
+      </a>
+    </div>
   </div>
 
   <script>
-    const targetDate = new Date("2026-11-28T23:11:00").getTime();
+    // ✅ NEW DATE
+    const targetDate = new Date("2026-03-22T11:50:00").getTime();
 
     const daysEl = document.getElementById("days");
     const hoursEl = document.getElementById("hours");
     const minutesEl = document.getElementById("minutes");
     const secondsEl = document.getElementById("seconds");
-    const linkEl = document.getElementById("link");
+
+    const countdownEl = document.getElementById("countdown");
+    const messageEl = document.getElementById("message");
+    const titleEl = document.getElementById("title");
 
     function updateCountdown() {
       const now = new Date().getTime();
@@ -77,8 +162,9 @@
 
       if (distance <= 0) {
         clearInterval(interval);
-        document.getElementById("countdown").style.display = "none";
-        linkEl.style.display = "block";
+        countdownEl.style.display = "none";
+        messageEl.style.display = "block";
+        titleEl.textContent = "You made it this far.";
         return;
       }
 
@@ -95,14 +181,45 @@
 
     const interval = setInterval(updateCountdown, 1000);
     updateCountdown();
+
+    const particlesContainer = document.getElementById("particles");
+
+    function createParticle(x, y) {
+      const particle = document.createElement("div");
+      particle.classList.add("particle");
+
+      const size = Math.random() * 6 + 4;
+      particle.style.width = size + "px";
+      particle.style.height = size + "px";
+
+      particle.style.left = x + "px";
+      particle.style.top = y + "px";
+
+      particle.style.background = `hsl(${Math.random()*360}, 100%, 70%)`;
+      particle.style.animationDuration = (Math.random() * 2 + 2) + "s";
+
+      particlesContainer.appendChild(particle);
+
+      setTimeout(() => particle.remove(), 4000);
+    }
+
+    // 🎉 Celebration burst on load
+    function celebrate() {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      for (let i = 0; i < 60; i++) {
+        setTimeout(() => {
+          createParticle(
+            centerX + (Math.random()*200 - 100),
+            centerY + (Math.random()*200 - 100)
+          );
+        }, i * 20);
+      }
+    }
+
+    window.onload = celebrate;
   </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
